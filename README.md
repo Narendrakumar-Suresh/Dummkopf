@@ -1,7 +1,7 @@
 # dmf - Dummkopf
 
 >[!NOTE]
->Will change the name.
+>Will change the name.(Probably)
 >(This is just a prototype and will port it to Go(mostly) or C.)
 
 FOB is a lightweight version control system implemented in Python. It provides basic version control functionality similar to Git, allowing you to track changes in your files and maintain a history of your project.
