@@ -27,3 +27,4 @@ venv/
 
 # FOB specific
 .fob/
+.fobignore
