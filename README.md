@@ -1,7 +1,7 @@
-# FOB - File Object Base Version Control System
+# dmf - Dummkopf
 
 >[!NOTE]
->Well it is actually F*** O** B****, but yeah GPT gave a better name for now.
+>Will change the name.
 >(This is just a prototype and will port it to Go(mostly) or C.)
 
 FOB is a lightweight version control system implemented in Python. It provides basic version control functionality similar to Git, allowing you to track changes in your files and maintain a history of your project.
