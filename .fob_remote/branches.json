@@ -2,5 +2,9 @@
   "main": {
     "commit_id": "b2979243-eee9-4f37-8b6b-0ffbf10299b7",
     "parent": ""
+  },
+  "test": {
+    "commit_id": "0eaca5c0-85a5-4398-a6d5-431074d6f0d6",
+    "parent": "main"
   }
 }

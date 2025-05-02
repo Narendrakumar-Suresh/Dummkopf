@@ -158,6 +158,7 @@ def log():
         typer.echo(f"date     : {commit['commit_time'].strftime('%Y-%m-%d %H:%M:%S')}")
         typer.echo("-" * 40)
 
+
 @app.command()
 def branch(name: str = typer.Argument(None, help="Name of the branch to create or switch to")):
     """
@@ -262,6 +263,83 @@ def push(remote_path: str = ".fob_remote"):
 
     typer.echo(f"Pushed branch '{head_branch}' to remote at '{remote_path}'")
 
+
+@app.command()
+def pull(remote_path: str = ".fob_remote"):
+    local_fob = Path.cwd() / FOB_DIR
+    remote_fob = Path(remote_path)
+    
+    if not local_fob.exists() or not remote_fob.exists():
+        typer.echo("FOB repository or remote not found.")
+        raise typer.Exit()
+    
+    # Pull commits
+    remote_commits = remote_fob / "commits"
+    local_commits = local_fob / "commits"
+    for file in remote_commits.glob("*.json"):
+        local_file = local_commits / file.name
+        if not local_file.exists():
+            local_file.write_text(file.read_text())
+            typer.echo(f"Pulled commit: {file.name}")
+    # Pull branches
+    remote_branches = remote_fob / BRANCHES_FILE
+    local_branches = local_fob / BRANCHES_FILE
+    if remote_branches.exists():
+        remote_data = json.loads(remote_branches.read_text())
+        if local_branches.exists():
+            local_data = json.loads(local_branches.read_text())
+        else:
+            local_data = {}
+
+        # Merge branches
+        for branch, info in remote_data.items():
+            if branch not in local_data:
+                local_data[branch] = info
+                typer.echo(f"Pulled branch: {branch}")
+
+        local_branches.write_text(json.dumps(local_data, indent=2))
+
+    typer.echo(f"Pulled from remote '{remote_path}'")
+
+
+@app.command()
+def delete(name: str):
+    """
+    Delete a branch by name.
+    """
+    fob_path = Path.cwd() / FOB_DIR
+    branches_path = fob_path / BRANCHES_FILE
+    head_path = fob_path / "HEAD"
+
+    if not branches_path.exists():
+        typer.echo("No branches found.")
+        raise typer.Exit()
+
+    # Load branches
+    with open(branches_path, "r") as f:
+        branches = json.load(f)
+
+    # Check if branch exists
+    if name not in branches:
+        typer.echo(f"Branch '{name}' does not exist.")
+        raise typer.Exit()
+
+    # Prevent deleting current branch
+    current_branch = head_path.read_text().strip()
+    if name == current_branch:
+        typer.echo(f"Cannot delete the current branch '{name}'.")
+        raise typer.Exit()
+
+    # Delete the branch
+    del branches[name]
+
+    # Save updated branches
+    with open(branches_path, "w") as f:
+        json.dump(branches, f, indent=2)
+
+    typer.echo(f"Deleted branch '{name}'")
+
+    
 
 
 if __name__ == "__main__":
